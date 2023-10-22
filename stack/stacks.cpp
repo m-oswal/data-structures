@@ -58,12 +58,6 @@ public:
 int main() {
   Stack myStack;
 
-  // myStack.push(1);
-  // myStack.push(2);
-  // myStack.push(3);
-  // myStack.push(4);
-  // myStack.push(5);
-
   cout<<"Enter 00 if you want to exit!"<<endl;
   cout<<"Push the elements: "<<endl;
   for(int i = 0; ;i++)
