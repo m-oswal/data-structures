@@ -1,152 +1,248 @@
 #include <stdio.h>
 #include <stdlib.h>
+
 struct node{
     int data;
     struct node *next;
 };
-// lets create function to add the node to the start
-void insertstart(struct node **head,int data){
-    struct node *p = (struct node *)malloc(sizeof(struct node));
-    p->data = data;
-    p->next = *head;
-    *head = p;
-}
-void deletefirst(struct node**head){
-    struct node *current = *head;
 
-    if(current!=NULL){
-        (*head)=current->next;
-    }
-    free(current);
-}
+// to insert start
+void insert_first(struct node **head,int data){
+    struct node *temp;
+    temp = *head;
 
-void deletelast(struct node **head) {
-    struct node *current = *head;
-    struct node *prev = NULL;
-
-    if (current == NULL) {
-        return;
-    }
-
-    while (current->next != NULL) {
-        prev = current;
-        current = current->next;
-    }
-
-    if (prev != NULL) {
-        prev->next = NULL;
-    } else {
-        *head = NULL;
-    }
-
-    free(current);
-}
-
-void deleteodd(struct node **head){
-    int pos=0;
-    struct node *current = *head;
-    struct node *pre;
-    while(current!=NULL){
-        if(pos==0){
-            struct node *temp = current;
-            current=current->next;
-            free(temp);
-            *head = current;
-            pos++;
-        }else{
-            if(pos%2!=0){
-                pre = current;
-                current=current->next;
-                pos++;
-            }
-            else{
-                pos++;
-                struct node *temp=current;
-                current=current->next;
-                pre->next = current;
-                free(temp);
-            }
-        }
+    struct node* newnode = (struct node *)malloc(sizeof(struct node));
+    newnode->data = data;
+    newnode->next = NULL;
+    if(temp ==NULL){
+        (*head)=newnode;
+    }else{
+        newnode->next = (*head);
+        (*head) = newnode;
     }
 }
-//lets create to add at the end
-void insertend(struct node **head,int data){
-    if(*head == NULL){
-        *head = malloc(sizeof(struct node));
-        (*head)->data=data;
-        (*head)->next = NULL;}
+// to insert at end.
+void insert_end(struct node **head,int data){
+    struct node *temp;
+    temp = (*head);
+    struct node* newnode = (struct node *)malloc(sizeof(struct node));
+    newnode->data = data;
+    newnode->next = NULL;
+    if(temp ==NULL){
+        (*head)=newnode;}
     else{
-        struct node *p = *head;
-
-        while(p->next!=NULL){
-            p=p->next;
-        }
-        struct node *new_node =(struct node *)malloc(sizeof(struct node));
-        new_node->data = data;
-        new_node->next = NULL;
-        p->next = new_node;
+        while(temp->next!=NULL){
+            temp=temp->next;}
+        temp->next = newnode;
     }
 }
 
-//now the fun part insert any
-
-void insertany(struct node **head,int data,int index){
-    int count = 0;//will use this to check if we reached the desired index
-    struct node *p = *head;
-    while(p!=NULL && count<index-1){
-        p=p->next;
+//to insert anywhere
+void insert_any(struct node **head,int pos,int data){
+    struct node *temp;
+    struct node *prev=NULL;
+    temp = (*head);
+    struct node* newnode = (struct node *)malloc(sizeof(struct node));
+    newnode->data = data;
+    int count=0;
+    while(temp!=NULL && temp->next!=NULL && count<pos){
+        prev=temp;
+        temp=temp->next;
         count++;
     }
-    struct node *new_node =(struct node *)malloc(sizeof(struct node));
-    new_node->data = data;
-    new_node->next = p->next;
-    p->next = new_node;
+    if(count==pos){
+        if(prev!=NULL){
+        prev->next = newnode;
+        newnode->next = temp;}
+        else{
+            newnode->next = (*head);
+            (*head)=newnode;
 
+        }
+    }else{
+        printf("pos doesnt exist");
+        free(newnode);
+    }
 }
 
-// now to delete any
 
-void deleteany(struct node **head,int target){
-    struct node *current = *head;
-    struct node *prev = NULL;
+void delete_first(struct node **head){
+    struct node *temp;
+    temp = (*head);
+    (*head)= temp->next;
+    free(temp);
+}
 
-    while (current->data!=target){
-        prev=current;
-        current = current->next;
+//delete last
+void delete_last(struct node **head){
+    struct node *temp;
+    struct node*prev;
+    temp = (*head);
+    while(temp->next!=NULL){
+        prev=temp;
+        temp=temp->next;
     }
     if(prev!=NULL){
-    prev ->next = current->next;
-    free(current);}
+        prev->next =NULL;
+    }else{
+        (*head)=NULL;
+    }
+    free(temp);
+}
+
+//delete any
+
+void delete_any(struct node **head,int data){
+    struct node *temp;
+    struct node *prev=NULL;
+    temp = (*head);
+
+    while(temp->next!=NULL && temp->data !=data){
+        prev = temp;
+        temp=temp->next;
+    }
+
+    if(prev!=NULL){
+        prev->next =temp->next;
+        free(temp);
+    }else{
+        (*head)=temp->next;
+        free(temp);
+    }
+}
+
+//delete any pos
+
+void delete_pos(struct node **head,int pos){
+    struct node *temp;
+    struct node *prev=NULL;
+    temp = (*head);
+    int count=0;
+    while(temp->next!=NULL && count<pos){
+        prev = temp;
+        temp=temp->next;
+        count++;
+    }
+    if(count==pos){
+    if(prev!=NULL){
+        prev->next =temp->next;
+        free(temp);
+    }else{
+        (*head)=temp->next;
+        free(temp);
+    }}
     else{
-        *head = current->next;
-        free(current);
+        printf("not found");
     }
 }
 
-//a function to transverse the list
-void trav(struct node *head){
-    struct node *p ;
-    p = head;
-    while(p!=NULL){
-        printf("%d\n",p->data);
-        p = p->next;
+//reverse list
+void rev(struct node **head,struct node **head2){
+    struct node *temp;
+    temp=(*head);
+
+    while(temp!=NULL){
+        insert_first(head2,temp->data);
+        temp = temp->next;
     }
 }
+void display(struct node *head){
+    struct node* temp =head;
+    while(temp!=NULL){
+        printf("%d ->",temp->data);
+        temp=temp->next;
+    }
+    printf("\n");
+}
 
-//insert by compare
+// we will concatenate 2 list now
 
-int main(){
-    struct node *head = NULL;
+void conc(struct node **head,struct node **head2){
+    struct node *temp;
+    temp=(*head);
 
-    insertend(&head,45);
-    insertend(&head,8);
-    insertend(&head,90);
-    insertend(&head,67);
-    insertend(&head,98);
-    deletelast(&head);
-   deleteodd(&head);
-    trav(head);
+    while(temp->next!=NULL){
+        temp = temp->next;
+    }
+    temp->next = (*head2);
+}
+int main() {
+    struct node* head = NULL;
+    struct node* head2 = NULL;
+    int choice, data, pos;
+    while (1) {
+        printf("\nLinked List Menu:\n");
+        printf("1. Insert at the beginning\n");
+        printf("2. Insert at the end\n");
+        printf("3. Insert at a specific position\n");
+        printf("4. Delete from the beginning\n");
+        printf("5. Delete from the end\n");
+        printf("6. Delete at a specific position\n");
+        printf("7. Reverse the list\n");
+        printf("8. Display the list\n");
+        printf("9. Concatenate with another list\n");
+        printf("0. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
 
+        switch (choice) {
+            case 1:
+                printf("Enter data to insert at the beginning: ");
+                scanf("%d", &data);
+                insert_first(&head, data);
+                break;
+
+            case 2:
+                printf("Enter data to insert at the end: ");
+                scanf("%d", &data);
+                insert_end(&head, data);
+                break;
+
+            case 3:
+                printf("Enter data to insert: ");
+                scanf("%d", &data);
+                printf("Enter position to insert at: ");
+                scanf("%d", &pos);
+                insert_any(&head, pos, data);
+                break;
+
+            case 4:
+                delete_first(&head);
+                break;
+
+            case 5:
+                delete_last(&head);
+                break;
+
+            case 6:
+                printf("Enter data to delete: ");
+                scanf("%d", &data);
+                delete_any(&head, data);
+                break;
+
+            case 7:
+                rev(&head, &head2);
+                printf("List reversed.\n");
+                break;
+
+            case 8:
+                printf("Current List: ");
+                display(head);
+                break;
+
+            case 9:
+                printf("Concatenating with another list.\n");
+                conc(&head, &head2);
+                break;
+
+            case 0:
+                printf("Exiting the program.\n");
+                exit(0);
+
+            default:
+                printf("Invalid choice. Please try again.\n");
+        }
+    }
 
     return 0;
 }
